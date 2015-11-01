@@ -74,7 +74,8 @@ setup_redis ()
     # Run the following commands to get Redis working:
 
     # Disable Redis listening on TCP by setting 'port' to 0
-    sed 's/^port .*/port 0/' /usr/local/etc/redis.conf.sample | sudo tee /usr/local/etc/redis.conf
+    cp /usr/local/etc/redis.conf.sample /usr/local/etc/redis.conf
+    sed -i '' -e 's/^port .*/port 0/' /usr/local/etc/redis.conf
 
     # Enable Redis socket
     echo 'unixsocket /usr/local/var/run/redis/redis.sock' | sudo tee -a /usr/local/etc/redis.conf
@@ -140,6 +141,9 @@ setup_gitlab ()
 
     # Set the number of workers to at least the number of cores
     sudo -u gitlab -H sed "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb.example | sudo tee config/unicorn.rb
+
+    # Change /home/git to /home/gitlab
+    sudo -u gitlab -H sed -i '' -e 's/\/home\/git\//\/home\/gitlab\//g' config/unicorn.rb
 
     # Copy the example Rack attack config
     sudo -u gitlab -H cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb
@@ -264,9 +268,9 @@ start_nginx ()
 #setup_redis
 #setup_gitlab
 #setup_gitlab_shell
-initialise_database
+#initialise_database
 #check_configuration
 #compile_assets
-#start_gitlab
+start_gitlab
 #configure_nginx
 #start_nginx
