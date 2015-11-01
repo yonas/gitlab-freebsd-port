@@ -52,7 +52,6 @@ setup_postgres ()
     sudo service postgresql start
 
     # Initialize Postgres db
-    #sudo rm -rf /usr/local/pgsql/data
     sudo -u pgsql initdb /usr/local/pgsql/data
 
     sudo service postgresql stop
