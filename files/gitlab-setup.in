@@ -52,8 +52,16 @@ setup_postgres ()
     sudo service postgresql start
 
     # Initialize Postgres db
-    sudo rm -rf /usr/local/pgsql/data
+    #sudo rm -rf /usr/local/pgsql/data
     sudo -u pgsql initdb /usr/local/pgsql/data
+
+    sudo service postgresql stop
+    sudo killall postgres
+    sudo service postgresql start
+
+    # Remove database and roles from previous setup
+    sudo -u pgsql psql -d template1 -c "DROP DATABASE IF EXISTS gitlabhq_production;"
+    sudo -u pgsql psql -d template1 -c "DROP ROLE IF EXISTS ${GITLAB_USER};"
 
     # Create a user for GitLab
     sudo -u pgsql psql -d template1 -c "CREATE USER ${GITLAB_USER} CREATEDB;"
@@ -61,10 +69,6 @@ setup_postgres ()
     # Create the GitLab production database & grant all privileges on database
     #sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
     sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER ${GITLAB_USER};"
-
-    sudo service postgresql stop
-    sudo killall postgres
-    sudo service postgresql start
 }
 
 
