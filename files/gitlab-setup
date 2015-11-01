@@ -230,7 +230,7 @@ configure_nginx ()
 {
 # Note: The default version of nginx on FreeBSD is compiled without the gzip_static module, which means you need to remove the appropriate directives from the Nginx configuration.
 mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
-sed "s/yourserver.yourdomain/$(hostname)/g" /usr/local/share/gitlab/nginx.conf.sample | sudo tee /usr/local/etc/nginx/nginx.conf
+sed "s/yourserver.yourdomain/$(hostname)/g" /usr/local/share/examples/gitlab/nginx.conf.sample | sudo tee /usr/local/etc/nginx/nginx.conf
 
 echo "Open /usr/local/etc/nginx/nginx.conf and make sure to read the comments in order to properly set up SSL."
 

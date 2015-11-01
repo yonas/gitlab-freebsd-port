@@ -1,5 +1,7 @@
 @owner gitlab
 @group gitlab
+bin/gitlab-setup
+%%PORTEXAMPLES%%%%EXAMPLESDIR%%/nginx.conf
 %%GITLAB_BASE%%/gitlab/Rakefile
 %%GITLAB_BASE%%/gitlab/.foreman
 %%GITLAB_BASE%%/gitlab/.gitattributes

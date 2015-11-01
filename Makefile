@@ -13,16 +13,18 @@ RUN_DEPENDS=	\
 	sudo:${PORTSDIR}/security/sudo \
 	bash:${PORTSDIR}/shells/bash \
 	cmake:${PORTSDIR}/devel/cmake \
-	icu:${PORTSDIR}/devel/icu \
+	icuinfo:${PORTSDIR}/devel/icu \
 	pkgconf:${PORTSDIR}/devel/pkgconf \
 	git:${PORTSDIR}/devel/git \
 	nginx:${PORTSDIR}/www/nginx \
 	node:${PORTSDIR}/www/node \
 	logrotate:${PORTSDIR}/sysutils/logrotate \
-	redis:${PORTSDIR}/databases/redis \
-	postgresql94:${PORTSDIR}/databases/postgresql94-server \
+	redis-server:${PORTSDIR}/databases/redis \
+	postgres:${PORTSDIR}/databases/postgresql94-server \
 	postfix:${PORTSDIR}/mail/postfix \
-	krb5:${PORTSDIR}/security/krb5
+	krb5-config:${PORTSDIR}/security/krb5
+
+NO_BUILD=	yes
 
 USE_GITHUB=	yes
 GH_ACCOUNT=	gitlabhq
@@ -37,5 +39,8 @@ SUB_LIST+=	GITLAB_BASE=${GITLAB_BASE}
 do-install:
 	${MKDIR} ${STAGEDIR}${GITLAB_BASE}/gitlab
 	(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${GITLAB_BASE}/gitlab)
+	@${MKDIR} ${STAGEDIR}${EXAMPLESDIR}
+	${CP} ${FILESDIR}/nginx.conf.sample ${STAGEDIR}${EXAMPLESDIR}/nginx.conf
+	${INSTALL_SCRIPT} ${FILESDIR}/gitlab-setup ${STAGEDIR}${PREFIX}/bin/gitlab-setup
 
 .include <bsd.port.mk>
