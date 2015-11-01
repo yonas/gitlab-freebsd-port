@@ -2794,6 +2794,7 @@ bin/gitlab-setup
 %%GITLAB_DIR%%/spec/routing/project_routing_spec.rb
 %%GITLAB_DIR%%/spec/routing/notifications_routing_spec.rb
 %%GITLAB_DIR%%/spec/routing/admin_routing_spec.rb
+@dir %%GITLAB_BASE%%
 @dir %%GITLAB_DIR%%
 @dir %%GITLAB_DIR%%/doc
 @dir %%GITLAB_DIR%%/doc/profile
