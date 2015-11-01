@@ -249,15 +249,15 @@ start_nginx ()
     service nginx start
 }
 
-#install_bundler
-#setup_rc_conf
-#setup_postgres
-#setup_redis
-#setup_gitlab
-#setup_gitlab_shell
-#initialise_database
-#check_configuration
-#compile_assets
-#start_gitlab
-#configure_nginx
-#start_nginx
+install_bundler
+setup_rc_conf
+setup_postgres
+setup_redis
+setup_gitlab
+setup_gitlab_shell
+initialise_database
+check_configuration
+compile_assets
+start_gitlab
+configure_nginx
+start_nginx
