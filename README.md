@@ -12,4 +12,6 @@ make install
 
 # Run the setup script
 /usr/local/bin/gitlab-setup
+
+# Go to http://<your server IP address>/ in your browser
 ```
