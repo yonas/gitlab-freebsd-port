@@ -7,7 +7,7 @@
 
 install_bundler ()
 {
-gem install bundler --no-ri --no-rdoc
+    gem install bundler --no-ri --no-rdoc
 }
 
 
@@ -16,27 +16,27 @@ gem install bundler --no-ri --no-rdoc
 
 setup_rc_conf ()
 {
-# TODO: detect if each line already exists in /etc/rc.conf before adding it.
-cat >> /etc/rc.conf <<EOD
-# Core services
-sshd_enable="YES"
-ntpd_enable="YES"
-ntpd_sync_on_start="YES"
+    # TODO: detect if each line already exists in /etc/rc.conf before adding it.
+    cat >> /etc/rc.conf <<EOD
+    # Core services
+    sshd_enable="YES"
+    ntpd_enable="YES"
+    ntpd_sync_on_start="YES"
 
-# GitLab services
-redis_enable="YES"
-postgresql_enable="YES"
-gitlab_enable="YES"
+    # GitLab services
+    redis_enable="YES"
+    postgresql_enable="YES"
+    gitlab_enable="YES"
 
-# Web server
-nginx_enable="YES"
+    # Web server
+    nginx_enable="YES"
 
-# Postfix/Sendmail
-postfix_enable="YES"
-sendmail_enable="NO"
-sendmail_submit_enable="NO"
-sendmail_outbound_enable="NO"
-sendmail_msp_queue_enable="NO"
+    # Postfix/Sendmail
+    postfix_enable="YES"
+    sendmail_enable="NO"
+    sendmail_submit_enable="NO"
+    sendmail_outbound_enable="NO"
+    sendmail_msp_queue_enable="NO"
 EOD
 }
 
@@ -46,17 +46,17 @@ EOD
 
 setup_postgres ()
 {
-# As root, make sure that Postgres is running:
-service postgresql start
+    # As root, make sure that Postgres is running:
+    service postgresql start
 
-# Initialize Postgres db
-sudo -u pgsql initdb /usr/local/pgsql/data
+    # Initialize Postgres db
+    sudo -u pgsql initdb /usr/local/pgsql/data
 
-# Create a user for GitLab
-sudo -u pgsql psql -d template1 -c 'CREATE USER gitlab CREATEDB;'
+    # Create a user for GitLab
+    sudo -u pgsql psql -d template1 -c 'CREATE USER gitlab CREATEDB;'
 
-# Create the GitLab production database & grant all privileges on database
-sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
+    # Create the GitLab production database & grant all privileges on database
+    sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
 }
 
 
@@ -65,30 +65,30 @@ sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gi
 
 setup_redis ()
 {
-# Add 'gitlab' user to 'redis' group
-pw user mod gitlab -G redis
+    # Add 'gitlab' user to 'redis' group
+    pw user mod gitlab -G redis
 
-# Back up the original Redis config file:
-cp /usr/local/etc/redis.conf /usr/local/etc/redis.conf.orig
+    # Back up the original Redis config file:
+    cp /usr/local/etc/redis.conf /usr/local/etc/redis.conf.orig
 
-# Run the following commands to get Redis working:
+    # Run the following commands to get Redis working:
 
-# Disable Redis listening on TCP by setting 'port' to 0
-sed 's/^port .*/port 0/' /usr/local/etc/redis.conf.sample | sudo tee /usr/local/etc/redis.conf
+    # Disable Redis listening on TCP by setting 'port' to 0
+    sed 's/^port .*/port 0/' /usr/local/etc/redis.conf.sample | sudo tee /usr/local/etc/redis.conf
 
-# Enable Redis socket
-echo 'unixsocket /usr/local/var/run/redis/redis.sock' | sudo tee -a /usr/local/etc/redis.conf
+    # Enable Redis socket
+    echo 'unixsocket /usr/local/var/run/redis/redis.sock' | sudo tee -a /usr/local/etc/redis.conf
 
-# Grant permission to the socket to all members of the Redis group
-echo 'unixsocketperm 770' | sudo tee -a /usr/local/etc/redis.conf
+    # Grant permission to the socket to all members of the Redis group
+    echo 'unixsocketperm 770' | sudo tee -a /usr/local/etc/redis.conf
 
-# Create the directory which contains the socket
-mkdir -p /usr/local/var/run/redis
-chown redis:redis /usr/local/var/run/redis
-chmod 755 /usr/local/var/run/redis
+    # Create the directory which contains the socket
+    mkdir -p /usr/local/var/run/redis
+    chown redis:redis /usr/local/var/run/redis
+    chmod 755 /usr/local/var/run/redis
 
-# Restart Redis
-sudo service redis restart
+    # Restart Redis
+    sudo service redis restart
 }
 
 
@@ -97,65 +97,65 @@ sudo service redis restart
 
 setup_gitlab ()
 {
-# Go to GitLab source folder
-cd /home/gitlab/gitlab
+    # Go to GitLab source folder
+    cd /home/gitlab/gitlab
 
-# Copy the example GitLab config
-sudo -u gitlab -H cp config/gitlab.yml.example config/gitlab.yml
+    # Copy the example GitLab config
+    sudo -u gitlab -H cp config/gitlab.yml.example config/gitlab.yml
 
-# Edit the GitLab configuration file
-# The option host: should be set to your domain, e.g. "gitlab.mysite.com".
-sed "s/host: localhost/host: $(hostname)/g" config/gitlab.yml.example | sudo tee config/gitlab.yml
+    # Edit the GitLab configuration file
+    # The option host: should be set to your domain, e.g. "gitlab.mysite.com".
+    sed "s/host: localhost/host: $(hostname)/g" config/gitlab.yml.example | sudo tee config/gitlab.yml
 
-# The line bin_path: should be set to FreeBSD's git location: /usr/local/bin/git.
-sed 's/^\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml | sudo tee -a config/gitlab.yml
+    # The line bin_path: should be set to FreeBSD's git location: /usr/local/bin/git.
+    sed 's/^\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml | sudo tee -a config/gitlab.yml
 
-# As root:
-cd /home/gitlab/gitlab
-chmod -R u+rw .
-chown -R gitlab log/
-chown -R gitlab tmp/
-chmod -R u+rwX,go-w log/
-chmod -R u+rwX tmp/
+    # As root:
+    cd /home/gitlab/gitlab
+    chmod -R u+rw .
+    chown -R gitlab log/
+    chown -R gitlab tmp/
+    chmod -R u+rwX,go-w log/
+    chmod -R u+rwX tmp/
 
-# Make folder for satellites and set the right permissions
-sudo -u gitlab -H mkdir /home/gitlab/gitlab-satellites
-sudo -u gitlab -H chmod u+rwx,g=rx,o-rwx /home/gitlab/gitlab-satellites
+    # Make folder for satellites and set the right permissions
+    sudo -u gitlab -H mkdir /home/gitlab/gitlab-satellites
+    sudo -u gitlab -H chmod u+rwx,g=rx,o-rwx /home/gitlab/gitlab-satellites
 
-# Make sure GitLab can write to the tmp/pids/ and tmp/sockets/ directories
-sudo -u gitlab -H chmod -R u+rwX tmp/pids/
-sudo -u gitlab -H chmod -R u+rwX tmp/sockets/
+    # Make sure GitLab can write to the tmp/pids/ and tmp/sockets/ directories
+    sudo -u gitlab -H chmod -R u+rwX tmp/pids/
+    sudo -u gitlab -H chmod -R u+rwX tmp/sockets/
 
-# Make sure GitLab can write to the public/uploads/ directory
-sudo -u gitlab -H chmod -R u+rwX  public/uploads
+    # Make sure GitLab can write to the public/uploads/ directory
+    sudo -u gitlab -H chmod -R u+rwX  public/uploads
 
-# Copy the example Unicorn config
-sudo -u gitlab -H cp config/unicorn.rb.example config/unicorn.rb
+    # Copy the example Unicorn config
+    sudo -u gitlab -H cp config/unicorn.rb.example config/unicorn.rb
 
-# Set the number of workers to at least the number of cores
-sudo -u gitlab -H sed "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb.example | sudo tee config/unicorn.rb
+    # Set the number of workers to at least the number of cores
+    sudo -u gitlab -H sed "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb.example | sudo tee config/unicorn.rb
 
-# Copy the example Rack attack config
-sudo -u gitlab -H cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb
+    # Copy the example Rack attack config
+    sudo -u gitlab -H cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb
 
-# Configure Git global settings for git user, useful when editing via web
-# Edit user.email according to what is set in gitlab.yml
-sudo -u gitlab -H git config --global user.name "GitLab"
-sudo -u gitlab -H git config --global user.email "example@example.com"
-sudo -u gitlab -H git config --global core.autocrlf input
+    # Configure Git global settings for git user, useful when editing via web
+    # Edit user.email according to what is set in gitlab.yml
+    sudo -u gitlab -H git config --global user.name "GitLab"
+    sudo -u gitlab -H git config --global user.email "example@example.com"
+    sudo -u gitlab -H git config --global core.autocrlf input
 
-# Copy Redis connection settings
-sudo -u gitlab -H cp config/resque.yml.example config/resque.yml
+    # Copy Redis connection settings
+    sudo -u gitlab -H cp config/resque.yml.example config/resque.yml
 
-# Configure Redis to use the modified socket path
-# Change 'production' line to 'unix:/usr/local/var/run/redis/redis.sock'
-sudo -u gitlab -H sed 's/^production: unix:\/var\/run\/redis\/redis.sock/production: unix:\/usr\/local\/var\/run\/redis\/redis.sock/g' config/resque.yml.example | sudo tee config/resque.yml
+    # Configure Redis to use the modified socket path
+    # Change 'production' line to 'unix:/usr/local/var/run/redis/redis.sock'
+    sudo -u gitlab -H sed 's/^production: unix:\/var\/run\/redis\/redis.sock/production: unix:\/usr\/local\/var\/run\/redis\/redis.sock/g' config/resque.yml.example | sudo tee config/resque.yml
 
-# Copy database config
-sudo -u gitlab -H cp config/database.yml.postgresql config/database.yml
+    # Copy database config
+    sudo -u gitlab -H cp config/database.yml.postgresql config/database.yml
 
-# Install Ruby Gems
-sudo -u gitlab -H bundle install --deployment --without development test mysql aws
+    # Install Ruby Gems
+    sudo -u gitlab -H bundle install --deployment --without development test mysql aws
 }
 
 
@@ -164,13 +164,13 @@ sudo -u gitlab -H bundle install --deployment --without development test mysql a
 
 setup_gitlab_shell ()
 {
-# Run the rake task for installing gitlab-shell
-sudo -u gitlab -H bundle exec rake gitlab:shell:install[v2.6.5] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
+    # Run the rake task for installing gitlab-shell
+    sudo -u gitlab -H bundle exec rake gitlab:shell:install[v2.6.5] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
 
-# Edit the gitlab-shell config
-cd /home/gitlab/gitlab-shell
-# Change the 'socket' option to '/usr/local/var/run/redis/redis.sock'
-sudo -u gitlab -H sed -i -e 's/socket: "\/var\/run\/redis\/redis.sock"/socket: "\/usr\/local\/var\/run\/redis\/redis.sock"/g' config.yml
+    # Edit the gitlab-shell config
+    cd /home/gitlab/gitlab-shell
+    # Change the 'socket' option to '/usr/local/var/run/redis/redis.sock'
+    sudo -u gitlab -H sed -i -e 's/socket: "\/var\/run\/redis\/redis.sock"/socket: "\/usr\/local\/var\/run\/redis\/redis.sock"/g' config.yml
 }
 
 
@@ -179,15 +179,15 @@ sudo -u gitlab -H sed -i -e 's/socket: "\/var\/run\/redis\/redis.sock"/socket: "
 
 initialise_database ()
 {
-# Initialize Database and Activate Advanced Features
-sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production
+    # Initialize Database and Activate Advanced Features
+    sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production
 
-# Type 'yes' to create the database tables.
-# When done you see 'Administrator account created:'
-# Note: You can set the Administrator/root password by supplying it in the environmental variable GITLAB_ROOT_PASSWORD as seen below.
-# If you don't set the password (and it is set to the default one) please wait with exposing GitLab to the public internet until the
-# installation is done and you've logged into the server the first time. During the first login you'll be forced to change the default password.
-#sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production GITLAB_ROOT_PASSWORD=yourpassword
+    # Type 'yes' to create the database tables.
+    # When done you see 'Administrator account created:'
+    # Note: You can set the Administrator/root password by supplying it in the environmental variable GITLAB_ROOT_PASSWORD as seen below.
+    # If you don't set the password (and it is set to the default one) please wait with exposing GitLab to the public internet until the
+    # installation is done and you've logged into the server the first time. During the first login you'll be forced to change the default password.
+    #sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production GITLAB_ROOT_PASSWORD=yourpassword
 }
 
 
@@ -196,9 +196,9 @@ sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production
 
 check_configuration ()
 {
-cd /home/gitlab/gitlab
-echo "If this all passes (all green and/or no errors are reported), then go ahead and compile all of the assets for GitLab."
-sudo -u gitlab -H bundle exec rake gitlab:env:info RAILS_ENV=production
+    cd /home/gitlab/gitlab
+    echo "If this all passes (all green and/or no errors are reported), then go ahead and compile all of the assets for GitLab."
+    sudo -u gitlab -H bundle exec rake gitlab:env:info RAILS_ENV=production
 }
 
 
@@ -207,8 +207,8 @@ sudo -u gitlab -H bundle exec rake gitlab:env:info RAILS_ENV=production
 
 compile_assets ()
 {
-echo "This can take ~10-15 minutes on a smaller machine, so don't panic if it takes a while!"
-sudo -u gitlab -H bundle exec rake assets:precompile RAILS_ENV=production
+    echo "This can take ~10-15 minutes on a smaller machine, so don't panic if it takes a while!"
+    sudo -u gitlab -H bundle exec rake assets:precompile RAILS_ENV=production
 }
 
 
@@ -217,9 +217,9 @@ sudo -u gitlab -H bundle exec rake assets:precompile RAILS_ENV=production
 
 start_gitlab ()
 {
-# If all of the above steps complete with no errors and everything has gone smoothly, then start the GitLab service.
-# As root:
-service gitlab start
+    # If all of the above steps complete with no errors and everything has gone smoothly, then start the GitLab service.
+    # As root:
+    service gitlab start
 }
 
 
@@ -228,15 +228,15 @@ service gitlab start
 
 configure_nginx ()
 {
-# Note: The default version of nginx on FreeBSD is compiled without the gzip_static module, which means you need to remove the appropriate directives from the Nginx configuration.
-mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
-sed "s/yourserver.yourdomain/$(hostname)/g" /usr/local/share/examples/gitlab/nginx.conf.sample | sudo tee /usr/local/etc/nginx/nginx.conf
+    # Note: The default version of nginx on FreeBSD is compiled without the gzip_static module, which means you need to remove the appropriate directives from the Nginx configuration.
+    mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
+    sed "s/yourserver.yourdomain/$(hostname)/g" /usr/local/share/examples/gitlab/nginx.conf.sample | sudo tee /usr/local/etc/nginx/nginx.conf
 
-echo "Open /usr/local/etc/nginx/nginx.conf and make sure to read the comments in order to properly set up SSL."
+    echo "Open /usr/local/etc/nginx/nginx.conf and make sure to read the comments in order to properly set up SSL."
 
-# Add nginx user to gitlab group:
-pw usermod -a -G gitlab nginx
-chmod g+rx /home/gitlab/
+    # Add nginx user to gitlab group:
+    pw usermod -a -G gitlab nginx
+    chmod g+rx /home/gitlab/
 }
 
 
@@ -245,8 +245,8 @@ chmod g+rx /home/gitlab/
 
 start_nginx ()
 {
-# Start Nginx:
-service nginx start
+    # Start Nginx:
+    service nginx start
 }
 
 #install_bundler
