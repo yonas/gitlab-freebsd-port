@@ -142,7 +142,7 @@ setup_gitlab ()
     # Set the number of workers to at least the number of cores
     sudo -u gitlab -H sed "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb.example | sudo tee config/unicorn.rb
 
-    # Change /home/git to /home/gitlab
+    # Every reference to /home/git should be set to /home/gitlab
     sudo -u gitlab -H sed -i '' -e 's/\/home\/git\//\/home\/gitlab\//g' config/unicorn.rb
 
     # Copy the example Rack attack config
