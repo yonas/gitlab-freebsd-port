@@ -35,6 +35,7 @@ GITLAB_BASE=	/home/gitlab
 
 PLIST_SUB+=	GITLAB_BASE=${GITLAB_BASE}
 SUB_LIST+=	GITLAB_BASE=${GITLAB_BASE}
+SUB_FILES=      pkg-message
 
 do-install:
 	${MKDIR} ${STAGEDIR}${GITLAB_BASE}/gitlab

@@ -1,4 +1,4 @@
 
 Run the GitLab setup script:
 
-/usr/local/bin/gitlab-setup
+%%PREFIX%%/bin/gitlab-setup
