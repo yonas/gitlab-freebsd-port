@@ -41,3 +41,6 @@ iocage start gitlab
 ```
 
 All these settings should be configured before running the `gitlab-setup` script.
+
+## Credits
+The original setup script was obtained from a [gitlab recipe](https://github.com/gitlabhq/gitlab-recipes/blob/master/install/freebsd/freebsd-10.md) and the very well written [installation instructions](https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/install/installation.md).
