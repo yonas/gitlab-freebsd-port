@@ -55,7 +55,8 @@ setup_postgres ()
     sudo -u pgsql psql -d template1 -c 'CREATE USER gitlab CREATEDB;'
 
     # Create the GitLab production database & grant all privileges on database
-    sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
+    #sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
+    sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab;"
 }
 
 
@@ -104,10 +105,16 @@ setup_gitlab ()
 
     # Edit the GitLab configuration file
     # The option host: should be set to your domain, e.g. "gitlab.mysite.com".
-    sed "s/host: localhost/host: $(hostname)/g" config/gitlab.yml.example | sudo tee config/gitlab.yml
+    sudo -u gitlab -H sed -i -e "s/host: localhost/host: $(hostname)/g" config/gitlab.yml
 
     # The line bin_path: should be set to FreeBSD's git location: /usr/local/bin/git.
-    sed 's/^\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml | sudo tee -a config/gitlab.yml
+    sudo -u gitlab -H sed -i -e 's/^\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml
+
+    # Every reference to /home/git should be set to /home/gitlab
+    sudo -u gitlab -H sed -i -e 's/\/home\/git/\/home\/gitlab/g' config/gitlab.yml
+
+    # Change the user from 'git' to 'gitlab'
+    sudo -u gitlab -H sed -i -e 's/# user: git/user: gitlab/g' config/gitlab.yml
 
     # As root:
     cd /home/gitlab/gitlab
@@ -163,6 +170,7 @@ setup_gitlab ()
 
 setup_gitlab_shell ()
 {
+    cd /home/gitlab/gitlab
     # Run the rake task for installing gitlab-shell
     sudo -u gitlab -H bundle exec rake gitlab:shell:install[v2.6.5] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
 
@@ -178,6 +186,7 @@ setup_gitlab_shell ()
 
 initialise_database ()
 {
+    cd /home/gitlab/gitlab
     # Initialize Database and Activate Advanced Features
     sudo -u gitlab -H bundle exec rake gitlab:setup RAILS_ENV=production
 
@@ -206,6 +215,7 @@ check_configuration ()
 
 compile_assets ()
 {
+    cd /home/gitlab/gitlab
     echo "This can take ~10-15 minutes on a smaller machine, so don't panic if it takes a while!"
     sudo -u gitlab -H bundle exec rake assets:precompile RAILS_ENV=production
 }
@@ -248,15 +258,15 @@ start_nginx ()
     service nginx start
 }
 
-install_bundler
-setup_rc_conf
-setup_postgres
-setup_redis
-setup_gitlab
-setup_gitlab_shell
+#install_bundler
+#setup_rc_conf
+#setup_postgres
+#setup_redis
+#setup_gitlab
+#setup_gitlab_shell
 initialise_database
-check_configuration
-compile_assets
-start_gitlab
-configure_nginx
-start_nginx
+#check_configuration
+#compile_assets
+#start_gitlab
+#configure_nginx
+#start_nginx
