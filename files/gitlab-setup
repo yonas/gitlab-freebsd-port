@@ -232,7 +232,7 @@ start_gitlab ()
 {
     # If all of the above steps complete with no errors and everything has gone smoothly, then start the GitLab service.
     # As root:
-    service gitlab start
+    sudo -u gitlab -H service gitlab start
 }
 
 
