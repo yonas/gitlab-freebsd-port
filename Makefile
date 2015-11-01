@@ -18,6 +18,8 @@ RUN_DEPENDS=	\
 	git:${PORTSDIR}/devel/git \
 	nginx:${PORTSDIR}/www/nginx \
 	go:${PORTSDIR}/lang/go \
+	ruby:${PORTSDIR}/lang/ruby21 \
+	gem:${PORTSDIR}/devel/ruby-gems \
 	node:${PORTSDIR}/www/node \
 	logrotate:${PORTSDIR}/sysutils/logrotate \
 	redis-server:${PORTSDIR}/databases/redis \
@@ -36,10 +38,6 @@ GROUPS=         ${GITLAB_GROUP}
 
 USE_RC_SUBR=    gitlab
 
-USE_RUBY=       yes
-USE_RUBYGEMS=   yes
-DEFAULT_VERSIONS+=	ruby=2.1
-
 USE_GITHUB=	yes
 GH_ACCOUNT=	gitlabhq
 GH_PROJECT=	gitlabhq
@@ -48,8 +46,8 @@ GH_TAGNAME=	8-1-stable
 GITLAB_BASE=	/home/${GITLAB_USER}
 GITLAB_DIR=	${GITLAB_BASE}/gitlab
 
-PLIST_SUB+=	GITLAB_BASE=${GITLAB_BASE} GITLAB_DIR=${GITLAB_DIR}
-SUB_LIST+=	GITLAB_BASE=${GITLAB_BASE} GITLAB_DIR=${GITLAB_DIR}
+PLIST_SUB+=	GITLAB_BASE="${GITLAB_BASE}" GITLAB_DIR="${GITLAB_DIR}"
+SUB_LIST+=	GITLAB_BASE="${GITLAB_BASE}" GITLAB_DIR="${GITLAB_DIR}"
 SUB_FILES=	pkg-message gitlab-setup
 
 do-install:
