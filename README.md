@@ -11,6 +11,12 @@ git clone https://github.com/yonas/gitlab-freebsd-port
 cd gitlab-freebsd-port
 make install
 
+# Enable accept filters for unicorn
+echo 'accf_http_load="YES"' >> /boot/loader.conf
+
+# Reboot the server to enable accept filters
+reboot
+
 # Run the setup script
 /usr/local/bin/gitlab-setup
 
@@ -19,7 +25,7 @@ make install
 
 ## Running in a jail
 
-If you'd like to run GitLab in a jail, you'll need to enable sysvipc for Postgres. For example, if you're using io cage:
+If you'd like to run GitLab in a [jail](https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails.html), you'll need to enable sysvipc for Postgres. For example, if you're using [io cage](http://iocage.readthedocs.org/en/latest):
 ```
 iocage stop gitlab
 iocage set allow_sysvipc=1 gitlab
@@ -33,3 +39,5 @@ iocage set ip4_addr="igb0|192.168.2.10/24" gitlab
 iocage set hostname="gitlab.server" gitlab
 iocage start gitlab
 ```
+
+All these settings should be configured before running the `gitlab-setup` script.
