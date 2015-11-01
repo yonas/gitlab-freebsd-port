@@ -18,25 +18,25 @@ setup_rc_conf ()
 {
     # TODO: detect if each line already exists in /etc/rc.conf before adding it.
     cat >> /etc/rc.conf <<EOD
-    # Core services
-    sshd_enable="YES"
-    ntpd_enable="YES"
-    ntpd_sync_on_start="YES"
+# Core services
+sshd_enable="YES"
+ntpd_enable="YES"
+ntpd_sync_on_start="YES"
 
-    # GitLab services
-    redis_enable="YES"
-    postgresql_enable="YES"
-    gitlab_enable="YES"
+# GitLab services
+redis_enable="YES"
+postgresql_enable="YES"
+gitlab_enable="YES"
 
-    # Web server
-    nginx_enable="YES"
+# Web server
+nginx_enable="YES"
 
-    # Postfix/Sendmail
-    postfix_enable="YES"
-    sendmail_enable="NO"
-    sendmail_submit_enable="NO"
-    sendmail_outbound_enable="NO"
-    sendmail_msp_queue_enable="NO"
+# Postfix/Sendmail
+postfix_enable="YES"
+sendmail_enable="NO"
+sendmail_submit_enable="NO"
+sendmail_outbound_enable="NO"
+sendmail_msp_queue_enable="NO"
 EOD
 }
 
