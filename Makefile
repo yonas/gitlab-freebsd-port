@@ -40,7 +40,7 @@ do-install:
 	${MKDIR} ${STAGEDIR}${GITLAB_BASE}/gitlab
 	(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${GITLAB_BASE}/gitlab)
 	@${MKDIR} ${STAGEDIR}${EXAMPLESDIR}
-	${CP} ${FILESDIR}/nginx.conf.sample ${STAGEDIR}${EXAMPLESDIR}/nginx.conf
+	${INSTALL_DATA} ${FILESDIR}/nginx.conf.sample ${STAGEDIR}${EXAMPLESDIR}/nginx.conf
 	${INSTALL_SCRIPT} ${FILESDIR}/gitlab-setup ${STAGEDIR}${PREFIX}/bin/gitlab-setup
 
 .include <bsd.port.mk>
