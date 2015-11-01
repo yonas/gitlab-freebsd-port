@@ -24,6 +24,8 @@ RUN_DEPENDS=	\
 	postfix:${PORTSDIR}/mail/postfix \
 	krb5-config:${PORTSDIR}/security/krb5
 
+NO_ARCH=	yes
+
 NO_BUILD=	yes
 
 USE_GITHUB=	yes
@@ -35,7 +37,7 @@ GITLAB_BASE=	/home/gitlab
 
 PLIST_SUB+=	GITLAB_BASE=${GITLAB_BASE}
 SUB_LIST+=	GITLAB_BASE=${GITLAB_BASE}
-SUB_FILES=      pkg-message
+SUB_FILES=	pkg-message
 
 do-install:
 	${MKDIR} ${STAGEDIR}${GITLAB_BASE}/gitlab
