@@ -17,6 +17,7 @@ RUN_DEPENDS=	\
 	pkgconf:${PORTSDIR}/devel/pkgconf \
 	git:${PORTSDIR}/devel/git \
 	nginx:${PORTSDIR}/www/nginx \
+	go:${PORTSDIR}/lang/go \
 	node:${PORTSDIR}/www/node \
 	logrotate:${PORTSDIR}/sysutils/logrotate \
 	redis-server:${PORTSDIR}/databases/redis \
@@ -32,6 +33,10 @@ USERS=          gitlab
 GROUPS=         gitlab
 
 USE_RC_SUBR=    gitlab
+
+USE_RUBY=       yes
+USE_RUBYGEMS=   yes
+DEFAULT_VERSIONS+=	ruby=2.1
 
 USE_GITHUB=	yes
 GH_ACCOUNT=	gitlabhq

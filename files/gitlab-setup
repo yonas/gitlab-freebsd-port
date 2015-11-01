@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+GITLAB_USER=gitlab
+GITLAB_BASE=/home/$GITLAB_USER
+GITLAB_DIR=/home/$GITLAB_USER/gitlab
+
 
 ######################################################################
 # 1. Install bundler gem system-wide:
@@ -186,7 +190,20 @@ setup_gitlab_shell ()
 
 
 ######################################################################
-# 7. Initialise Database
+# 7. Install gitlab-git-http-server
+
+install_git_server ()
+{
+    cd /home/gitlab
+    sudo -u gitlab -H git clone https://gitlab.com/gitlab-org/gitlab-git-http-server.git
+    cd gitlab-git-http-server
+    sudo -u gitlab -H git checkout 0.3.0
+    sudo -u gitlab -H make
+}
+
+
+######################################################################
+# 8. Initialise Database
 
 initialise_database ()
 {
@@ -204,7 +221,7 @@ initialise_database ()
 
 
 ######################################################################
-# 8. Check Configuration
+# 9. Check Configuration
 
 check_configuration ()
 {
@@ -215,7 +232,7 @@ check_configuration ()
 
 
 ######################################################################
-# 9. Compile Assets
+# 10. Compile Assets
 
 compile_assets ()
 {
@@ -226,40 +243,46 @@ compile_assets ()
 
 
 ######################################################################
-# 10. Start GitLab service
+# 11. Start GitLab service
 
 start_gitlab ()
 {
     # If all of the above steps complete with no errors and everything has gone smoothly, then start the GitLab service.
-    # As root:
+    # Stop any old processes
+    sudo -u gitlab -H service gitlab stop
+    # Launch GitLab daemons
     sudo -u gitlab -H service gitlab start
 }
 
 
 ######################################################################
-# 11. Configure Nginx
+# 12. Configure Nginx
 
 configure_nginx ()
 {
     # Note: The default version of nginx on FreeBSD is compiled without the gzip_static module, which means you need to remove the appropriate directives from the Nginx configuration.
     mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
-    sed "s/yourserver.yourdomain/$(hostname)/g" /usr/local/share/examples/gitlab/nginx.conf.sample | sudo tee /usr/local/etc/nginx/nginx.conf
+    cp /usr/local/share/examples/gitlab/nginx.conf /usr/local/etc/nginx/nginx.conf 
+    sed -i '' -e "s/yourserver.yourdomain/$(hostname)/g" /usr/local/etc/nginx/nginx.conf
 
     echo "Open /usr/local/etc/nginx/nginx.conf and make sure to read the comments in order to properly set up SSL."
-
-    # Add nginx user to gitlab group:
-    pw usermod -a -G gitlab nginx
-    chmod g+rx /home/gitlab/
 }
 
 
 ######################################################################
-# 12. Start Nginx
+# 13. Start Nginx
 
 start_nginx ()
 {
     # Start Nginx:
-    service nginx start
+    service nginx restart
+
+    echo "
+Visit http://$(hostname) in your web browser for your first GitLab login. The setup has created a default admin account for you. You can use it to log in:
+
+username: root
+password: 5iveL!fe
+"
 }
 
 #install_bundler
@@ -268,9 +291,10 @@ start_nginx ()
 #setup_redis
 #setup_gitlab
 #setup_gitlab_shell
+#install_git_server
 #initialise_database
 #check_configuration
 #compile_assets
-start_gitlab
+#start_gitlab
 #configure_nginx
-#start_nginx
+start_nginx
