@@ -29,8 +29,10 @@ NO_ARCH=	yes
 
 NO_BUILD=	yes
 
-USERS=          gitlab
-GROUPS=         gitlab
+GITLAB_USER=	gitlab
+GITLAB_GROUP=	gitlab
+USERS=          ${GITLAB_USER}
+GROUPS=         ${GITLAB_GROUP}
 
 USE_RC_SUBR=    gitlab
 
@@ -43,12 +45,12 @@ GH_ACCOUNT=	gitlabhq
 GH_PROJECT=	gitlabhq
 GH_TAGNAME=	8-1-stable
 
-GITLAB_BASE=	/home/gitlab
+GITLAB_BASE=	/home/${GITLAB_USER}
 GITLAB_DIR=	${GITLAB_BASE}/gitlab
 
 PLIST_SUB+=	GITLAB_BASE=${GITLAB_BASE} GITLAB_DIR=${GITLAB_DIR}
 SUB_LIST+=	GITLAB_BASE=${GITLAB_BASE} GITLAB_DIR=${GITLAB_DIR}
-SUB_FILES=	pkg-message
+SUB_FILES=	pkg-message gitlab-setup
 
 do-install:
 	${MKDIR} ${STAGEDIR}${GITLAB_DIR}
