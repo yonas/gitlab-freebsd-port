@@ -185,7 +185,7 @@ setup_gitlab_shell ()
     sudo -u ${GITLAB_USER} -H bundle exec rake gitlab:shell:install[v2.6.5] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
 
     # Edit the gitlab-shell config
-    cd /home/gitlab/gitlab-shell
+    cd ${GITLAB_BASE}/gitlab-shell
     # Change the 'socket' option to '/usr/local/var/run/redis/redis.sock'
     sudo -u ${GITLAB_USER} -H sed -i '' -e 's/socket: "\/var\/run\/redis\/redis.sock"/socket: "\/usr\/local\/var\/run\/redis\/redis.sock"/g' config.yml
 }
