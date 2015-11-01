@@ -12,7 +12,7 @@ FQDN=$(hostname)
 
 install_bundler ()
 {
-    gem install bundler --no-ri --no-rdoc
+    sudo gem install bundler --no-ri --no-rdoc
 }
 
 
@@ -23,11 +23,6 @@ setup_rc_conf ()
 {
     # TODO: detect if each line already exists in /etc/rc.conf before adding it.
     cat >> /etc/rc.conf <<EOD
-# Core services
-sshd_enable="YES"
-ntpd_enable="YES"
-ntpd_sync_on_start="YES"
-
 # GitLab services
 redis_enable="YES"
 postgresql_enable="YES"
@@ -52,7 +47,7 @@ EOD
 setup_postgres ()
 {
     # As root, make sure that Postgres is running:
-    service postgresql start
+    sudo service postgresql start
 
     # Initialize Postgres db
     sudo -u pgsql initdb /usr/local/pgsql/data
@@ -63,6 +58,9 @@ setup_postgres ()
     # Create the GitLab production database & grant all privileges on database
     #sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER gitlab encoding='UTF8';"
     sudo -u pgsql psql -d template1 -c "CREATE DATABASE gitlabhq_production OWNER ${GITLAB_USER};"
+
+    sudo service postgresql stop
+    sudo service postgresql start
 }
 
 
@@ -72,16 +70,16 @@ setup_postgres ()
 setup_redis ()
 {
     # Add gitlab user to redis group
-    pw user mod ${GITLAB_USER} -G redis
+    sudo pw user mod ${GITLAB_USER} -G redis
 
     # Back up the original Redis config file:
-    cp /usr/local/etc/redis.conf /usr/local/etc/redis.conf.orig
+    sudo cp /usr/local/etc/redis.conf /usr/local/etc/redis.conf.orig
 
     # Run the following commands to get Redis working:
 
     # Disable Redis listening on TCP by setting 'port' to 0
-    cp /usr/local/etc/redis.conf.sample /usr/local/etc/redis.conf
-    sed -i '' -e 's/^port .*/port 0/' /usr/local/etc/redis.conf
+    sudo cp /usr/local/etc/redis.conf.sample /usr/local/etc/redis.conf
+    sudo sed -i '' -e 's/^port .*/port 0/' /usr/local/etc/redis.conf
 
     # Enable Redis socket
     echo 'unixsocket /usr/local/var/run/redis/redis.sock' | sudo tee -a /usr/local/etc/redis.conf
@@ -90,9 +88,9 @@ setup_redis ()
     echo 'unixsocketperm 770' | sudo tee -a /usr/local/etc/redis.conf
 
     # Create the directory which contains the socket
-    mkdir -p /usr/local/var/run/redis
-    chown redis:redis /usr/local/var/run/redis
-    chmod 755 /usr/local/var/run/redis
+    sudo mkdir -p /usr/local/var/run/redis
+    sudo chown redis:redis /usr/local/var/run/redis
+    sudo chmod 755 /usr/local/var/run/redis
 
     # Restart Redis
     sudo service redis restart
@@ -125,11 +123,11 @@ setup_gitlab ()
 
     # As root:
     cd ${GITLAB_DIR}
-    chmod -R u+rw .
-    chown -R ${GITLAB_USER} log/
-    chown -R ${GITLAB_USER} tmp/
-    chmod -R u+rwX,go-w log/
-    chmod -R u+rwX tmp/
+    sudo chmod -R u+rw .
+    sudo chown -R ${GITLAB_USER} log/
+    sudo chown -R ${GITLAB_USER} tmp/
+    sudo chmod -R u+rwX,go-w log/
+    sudo chmod -R u+rwX tmp/
 
     # Make folder for satellites and set the right permissions
     sudo -u ${GITLAB_USER} -H mkdir ${GITLAB_BASE}/gitlab-satellites
@@ -146,7 +144,8 @@ setup_gitlab ()
     sudo -u ${GITLAB_USER} -H cp config/unicorn.rb.example config/unicorn.rb
 
     # Set the number of workers to at least the number of cores
-    sudo -u ${GITLAB_USER} -H sed "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb.example | sudo tee config/unicorn.rb
+    sudo -u ${GITLAB_USER} -H cp config/unicorn.rb.example config/unicorn.rb
+    sudo -u ${GITLAB_USER} -H sed -i '' -e "s/worker_processes 3/worker_processes $(sysctl -n hw.ncpu)/g" config/unicorn.rb
 
     # Every reference to /home/git should be set to %%GITLAB_BASE%%
     sudo -u ${GITLAB_USER} -H sed -i '' -e "s/\/home\/git\//${GITLAB_BASE//\//\\/}\//g" config/unicorn.rb
@@ -165,7 +164,8 @@ setup_gitlab ()
 
     # Configure Redis to use the modified socket path
     # Change 'production' line to 'unix:/usr/local/var/run/redis/redis.sock'
-    sudo -u ${GITLAB_USER} -H sed 's/^production: unix:\/var\/run\/redis\/redis.sock/production: unix:\/usr\/local\/var\/run\/redis\/redis.sock/g' config/resque.yml.example | sudo tee config/resque.yml
+    sudo -u ${GITLAB_USER} -H cp config/resque.yml.example config/resque.yml
+    sudo -u ${GITLAB_USER} -H sed -i '' -e 's/^production: unix:\/var\/run\/redis\/redis.sock/production: unix:\/usr\/local\/var\/run\/redis\/redis.sock/g' config/resque.yml
 
     # Copy database config
     sudo -u ${GITLAB_USER} -H cp config/database.yml.postgresql config/database.yml
@@ -263,9 +263,9 @@ start_gitlab ()
 configure_nginx ()
 {
     # Note: The default version of nginx on FreeBSD is compiled without the gzip_static module, which means you need to remove the appropriate directives from the Nginx configuration.
-    mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
-    cp /usr/local/share/examples/gitlab/nginx.conf /usr/local/etc/nginx/nginx.conf 
-    sed -i '' -e "s/yourserver.yourdomain/${FQDN}/g" /usr/local/etc/nginx/nginx.conf
+    sudo mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.orig
+    sudo cp /usr/local/share/examples/gitlab/nginx.conf /usr/local/etc/nginx/nginx.conf 
+    sudo sed -i '' -e "s/yourserver.yourdomain/${FQDN}/g" /usr/local/etc/nginx/nginx.conf
 
     echo "Open /usr/local/etc/nginx/nginx.conf and make sure to read the comments in order to properly set up SSL."
 }
@@ -277,7 +277,7 @@ configure_nginx ()
 start_nginx ()
 {
     # Start Nginx:
-    service nginx restart
+    sudo service nginx restart
 
     echo "
 Visit http://${FQDN} in your web browser for your first GitLab login. The setup has created a default admin account for you. You can use it to log in:
