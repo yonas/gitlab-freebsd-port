@@ -42,7 +42,7 @@ mail_room_enabled=false
 mail_room_pid_path="$pid_path/mail_room.pid"
 gitlab_git_http_server_pid_path="$pid_path/gitlab-git-http-server.pid"
 gitlab_git_http_server_options="-listenUmask 0 -listenNetwork unix -listenAddr $socket_path/gitlab-git-http-server.socket -authBackend http://127.0.0.1:8080"
-gitlab_git_http_server_repo_root="/home/${app_user}/repositories"
+gitlab_git_http_server_repo_root="%%GITLAB_BASE%%/repositories"
 gitlab_git_http_server_log="$app_root/log/gitlab-git-http-server.log"
 shell_path="/usr/local/bin/bash"
 
