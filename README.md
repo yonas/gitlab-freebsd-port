@@ -3,9 +3,8 @@
 ## How to install using the pre-built package
 
 ```
-# Download this repository
-git clone https://github.com/yonas/gitlab-freebsd-port
-cd gitlab-freebsd-port
+# Download the package
+wget https://github.com/yonas/gitlab-freebsd-port/raw/master/gitlab-8.1.txz
 
 # Install the package
 pkg install gitlab-8.1.txz
