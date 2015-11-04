@@ -1,7 +1,7 @@
 bin/gitlab-setup
 %%PORTEXAMPLES%%%%EXAMPLESDIR%%/nginx.conf
-@owner gitlab
-@group gitlab
+@owner git
+@group git
 %%GITLAB_DIR%%/Rakefile
 %%GITLAB_DIR%%/.foreman
 %%GITLAB_DIR%%/.gitattributes
