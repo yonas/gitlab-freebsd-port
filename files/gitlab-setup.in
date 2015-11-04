@@ -21,8 +21,23 @@ install_bundler ()
 
 setup_rc_conf ()
 {
-    # TODO: detect if each line already exists in /etc/rc.conf before adding it.
-    cat >> /etc/rc.conf <<EOD
+    if hash sysrc 2> /dev/null; then
+        # GitLab services
+        sysrc redis_enable="YES"
+        sysrc postgresql_enable="YES"
+        sysrc gitlab_enable="YES"
+
+        # Web server
+        sysrc nginx_enable="YES"
+
+        # Postfix/Sendmail
+        sysrc postfix_enable="YES"
+        sysrc sendmail_enable="NO"
+        sysrc sendmail_submit_enable="NO"
+        sysrc sendmail_outbound_enable="NO"
+        sysrc sendmail_msp_queue_enable="NO"
+    else
+        cat >> /etc/rc.conf <<EOD
 # GitLab services
 redis_enable="YES"
 postgresql_enable="YES"
@@ -38,6 +53,7 @@ sendmail_submit_enable="NO"
 sendmail_outbound_enable="NO"
 sendmail_msp_queue_enable="NO"
 EOD
+    fi
 }
 
 
