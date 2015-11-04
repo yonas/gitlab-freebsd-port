@@ -1,6 +1,28 @@
 # A GitLab port for FreeBSD
 
-## How to install
+## How to install using the pre-built package
+
+```
+# Download this repository
+git clone https://github.com/yonas/gitlab-freebsd-port
+cd gitlab-freebsd-port
+
+# Install the package
+pkg install gitlab-8.1.txz
+
+# Enable accept filters for unicorn
+echo 'accf_http_load="YES"' >> /boot/loader.conf
+
+# Reboot the server to enable accept filters
+reboot
+
+# Run the setup script
+/usr/local/bin/gitlab-setup
+
+# Go to http://<your server IP address>/ in your browser
+```
+
+## How to install using the port
 
 ```
 # Install required packages
