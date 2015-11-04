@@ -22,6 +22,9 @@ install_bundler ()
 setup_rc_conf ()
 {
     if hash sysrc 2> /dev/null; then
+        # Core services
+        sysrc sshd_enable="YES"
+
         # GitLab services
         sysrc redis_enable="YES"
         sysrc postgresql_enable="YES"
@@ -38,6 +41,9 @@ setup_rc_conf ()
         sysrc sendmail_msp_queue_enable="NO"
     else
         cat >> /etc/rc.conf <<EOD
+# Core services
+sshd_enable="YES"
+
 # GitLab services
 redis_enable="YES"
 postgresql_enable="YES"
