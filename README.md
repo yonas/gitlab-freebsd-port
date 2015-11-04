@@ -1,6 +1,6 @@
 # A GitLab port for FreeBSD
 
-## How to install using the pre-built package
+## Install using packages
 
 ```
 # Download the package
@@ -21,12 +21,9 @@ reboot
 # Go to http://<your server IP address>/ in your browser
 ```
 
-## How to install using the port
+## Install using ports
 
 ```
-# Install required packages
-pkg install sudo bash icu cmake pkgconf git nginx node go ruby ruby21-gems logrotate redis postgresql94-server postfix krb5
-
 # Download and install this port
 git clone https://github.com/yonas/gitlab-freebsd-port
 cd gitlab-freebsd-port
