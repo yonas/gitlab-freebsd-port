@@ -4,6 +4,7 @@
 
 ```
 # Download the package
+pkg install wget
 wget https://github.com/yonas/gitlab-freebsd-port/raw/master/gitlab-8.1.txz
 
 # Install the package
