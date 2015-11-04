@@ -8,6 +8,7 @@ pkg install ca_root_nss
 fetch https://github.com/yonas/gitlab-freebsd-port/raw/master/gitlab-8.1.txz
 
 # Install the package
+pkg install krb5
 pkg install gitlab-8.1.txz
 
 # Enable accept filters for unicorn
