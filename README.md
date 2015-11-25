@@ -5,11 +5,11 @@
 ```
 # Download the package
 pkg install ca_root_nss
-fetch https://github.com/yonas/gitlab-freebsd-port/raw/master/gitlab-8.1.txz
+fetch https://github.com/yonas/gitlab-freebsd-port/raw/master/gitlab-8.2.txz
 
 # Install the package
 pkg install krb5
-pkg install gitlab-8.1.txz
+pkg install gitlab-8.2.txz
 
 # Enable accept filters for unicorn
 echo 'accf_http_load="YES"' >> /boot/loader.conf

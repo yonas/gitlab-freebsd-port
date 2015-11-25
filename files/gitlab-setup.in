@@ -142,7 +142,7 @@ setup_gitlab ()
     sudo -u ${GITLAB_USER} -H sed -i '' -e "s/host: localhost/host: ${FQDN}/g" config/gitlab.yml
 
     # The line bin_path: should be set to FreeBSD's git location: /usr/local/bin/git.
-    sudo -u ${GITLAB_USER} -H sed -i '' -e 's/^\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml
+    sudo -u ${GITLAB_USER} -H sed -i '' -e 's/\/usr\/bin\/git/\/usr\/local\/bin\/git/' config/gitlab.yml
 
     # Every reference to /home/git should be set to %%GITLAB_BASE%%
     sudo -u ${GITLAB_USER} -H sed -i '' -e "s/\/home\/git/${GITLAB_BASE//\//\\/}/g" config/gitlab.yml
@@ -211,7 +211,7 @@ setup_gitlab_shell ()
 {
     cd ${GITLAB_DIR}
     # Run the rake task for installing gitlab-shell
-    sudo -u ${GITLAB_USER} -H bundle exec rake gitlab:shell:install[v2.6.5] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
+    sudo -u ${GITLAB_USER} -H bundle exec rake gitlab:shell:install[v2.6.7] REDIS_URL=unix:/usr/local/var/run/redis/redis.sock RAILS_ENV=production
 
     # Edit the gitlab-shell config
     cd ${GITLAB_BASE}/gitlab-shell
@@ -221,14 +221,14 @@ setup_gitlab_shell ()
 
 
 ######################################################################
-# 7. Install gitlab-git-http-server
+# 7. Install gitlab-workhorse
 
-install_git_server ()
+install_workhorse ()
 {
     cd ${GITLAB_BASE}
-    sudo -u ${GITLAB_USER} -H git clone https://gitlab.com/gitlab-org/gitlab-git-http-server.git
-    cd gitlab-git-http-server
-    sudo -u ${GITLAB_USER} -H git checkout 0.3.0
+    sudo -u ${GITLAB_USER} -H git clone https://gitlab.com/gitlab-org/gitlab-workhorse.git
+    cd gitlab-workhorse
+    sudo -u ${GITLAB_USER} -H git checkout 0.4.2
     sudo -u ${GITLAB_USER} -H make
 }
 
@@ -322,7 +322,7 @@ setup_postgres
 setup_redis
 setup_gitlab
 setup_gitlab_shell
-install_git_server
+install_workhorse
 initialise_database
 check_configuration
 compile_assets

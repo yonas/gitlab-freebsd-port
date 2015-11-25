@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	gitlab
-PORTVERSION=	8.1
+PORTVERSION=	8.2
 CATEGORIES=	www
 
 MAINTAINER=	yonas@fizk.net
@@ -41,7 +41,7 @@ USE_RC_SUBR=	gitlab
 USE_GITHUB=	yes
 GH_ACCOUNT=	gitlabhq
 GH_PROJECT=	gitlabhq
-GH_TAGNAME=	8-1-stable
+GH_TAGNAME=	8-2-stable
 
 GITLAB_BASE=	${PREFIX}/gitlab
 GITLAB_DIR=	${GITLAB_BASE}/gitlab
