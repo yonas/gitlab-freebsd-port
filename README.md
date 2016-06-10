@@ -1,3 +1,6 @@
+# GitLab is now in [ports](http://www.freshports.org/www/gitlab)!
+You can now install GitLab using `pkg install gitlab`.
+
 # A GitLab port for FreeBSD
 
 ## Install using packages
